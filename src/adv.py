@@ -40,7 +40,9 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
-player = Player(room['outside'])
+#
+# The player is named Steve because the specification says they need a name
+player = Player(room['outside'], name="Steve")
 
 def direction_name(direction):
     if direction == 'n':

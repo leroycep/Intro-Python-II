@@ -1,9 +1,10 @@
 # Write a class to hold player information, e.g. what room they are in
 # currently.
 class Player:
-    def __init__(self, current_room, inventory=[]):
+    def __init__(self, current_room, inventory=[], name=""):
         self.current_room = current_room
         self.inventory = inventory
+        self.name = name
 
     def take(self, item_name):
         for idx, item in enumerate(self.inventory):
