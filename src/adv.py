@@ -102,6 +102,7 @@ while True:
             print(f"  {action[0]} <item>")
             continue
         item = player.current_room.take(action[1])
+        item.on_take()
         if item == None:
             print(f"I don't see a {action[1]} around here")
         else:
@@ -118,6 +119,7 @@ while True:
             print(f"  {action[0]} <item>")
             continue
         item = player.take(action[1])
+        item.on_drop()
         if item == None:
             print(f"I don't have a {action[1]}")
         else:
