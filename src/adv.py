@@ -111,5 +111,16 @@ while True:
         for item in player.inventory:
             print(f"- {item.name}: {item.description}")
         print()
+    elif action[0] == "drop" or action[0] == "d":
+        if len(action) != 2:
+            print("Invalid usage of `drop`")
+            print("Usage:")
+            print(f"  {action[0]} <item>")
+            continue
+        item = player.take(action[1])
+        if item == None:
+            print(f"I don't have a {action[1]}")
+        else:
+            player.current_room.add_item(item)
     else:
         print(f"I don't know how to \"{action[0]}\"")

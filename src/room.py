@@ -16,3 +16,6 @@ class Room:
             if item.name == item_name:
                 return self.items.pop(idx)
         return None
+
+    def add_item(self, item):
+        self.items.append(item)
