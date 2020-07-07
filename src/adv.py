@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 
 # Declare all the rooms
 
@@ -15,7 +16,7 @@ into the darkness. Ahead to the north, a light flickers in
 the distance, but there is no way across the chasm."""),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", [Item("gold", "a nugget of gold")]),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
@@ -70,6 +71,13 @@ def move_to_room(player, direction):
 while True:
     print(f"\n# {player.current_room.name}\n")
     print(f"{player.current_room.description}\n")
+
+    if (len(player.current_room.items) > 0):
+        print(f"\n## Items")
+    for item in player.current_room.items:
+        print(f"- {item.name}: {item.description}")
+    if (len(player.current_room.items) > 0):
+        print()
 
     action = None
     try:
