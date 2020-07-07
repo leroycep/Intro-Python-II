@@ -1,6 +1,6 @@
 from room import Room
 from player import Player
-from item import Item
+from item import Item, LightSource
 
 # Declare all the rooms
 
@@ -16,11 +16,11 @@ into the darkness. Ahead to the north, a light flickers in
 the distance, but there is no way across the chasm."""),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air.""", [Item("gold", "a nugget of gold")]),
+to north. The smell of gold permeates the air.""", [Item("gold", "a nugget of gold")], lit=False),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", items=[LightSource("lamp", "a plain lamp, that is somehow still lit")], lit=False),
 }
 
 
@@ -69,15 +69,20 @@ def move_to_room(player, direction):
         player.current_room = next_room
 
 while True:
-    print(f"\n# {player.current_room.name}\n")
-    print(f"{player.current_room.description}\n")
+    can_see = player.can_see()
 
-    if (len(player.current_room.items) > 0):
-        print(f"\n## Items")
-    for item in player.current_room.items:
-        print(f"- {item.name}: {item.description}")
-    if (len(player.current_room.items) > 0):
-        print()
+    if can_see:
+        print(f"\n# {player.current_room.name}\n")
+        print(f"{player.current_room.description}\n")
+
+        if (len(player.current_room.items) > 0):
+            print(f"\n## Items")
+        for item in player.current_room.items:
+            print(f"- {item.name}: {item.description}")
+        if (len(player.current_room.items) > 0):
+            print()
+    else:
+        print("The room is dark; you can't see a thing")
 
     action = None
     try:
@@ -100,6 +105,9 @@ while True:
             print("Invalid usage of `get`")
             print("Usage:")
             print(f"  {action[0]} <item>")
+            continue
+        if not can_see:
+            print("Good luck finding anything in the dark!")
             continue
         item = player.current_room.take(action[1])
         item.on_take()

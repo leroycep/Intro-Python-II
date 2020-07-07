@@ -2,7 +2,7 @@
 # description attributes.
 
 class Room:
-    def __init__(self, name, description, items=[]):
+    def __init__(self, name, description, items=[], lit=True):
         self.name = name
         self.description = description
         self.n_to = None
@@ -10,6 +10,7 @@ class Room:
         self.s_to = None
         self.w_to = None
         self.items = items
+        self.is_lit = lit
 
     def take(self, item_name):
         for idx, item in enumerate(self.items):

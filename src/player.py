@@ -11,3 +11,14 @@ class Player:
                 return self.inventory.pop(idx)
         return None
 
+    def can_see(self):
+        if self.current_room.is_lit:
+            return True
+        for item in self.current_room.items:
+            if item.provides_light:
+                return True
+        for item in self.inventory:
+            if item.provides_light:
+                return True
+        return False
+
