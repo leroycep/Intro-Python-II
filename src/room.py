@@ -15,3 +15,4 @@ class Room:
         for idx, item in enumerate(self.items):
             if item.name == item_name:
                 return self.items.pop(idx)
+        return None

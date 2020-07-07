@@ -95,5 +95,21 @@ while True:
         move_to_room(player, "s")
     elif action[0] == "west" or action[0] == "w":
         move_to_room(player, "w")
+    elif action[0] == "get":
+        if len(action) != 2:
+            print("Invalid usage of `get`")
+            print("Usage:")
+            print(f"  {action[0]} <item>")
+            continue
+        item = player.current_room.take(action[1])
+        if item == None:
+            print(f"I don't see a {action[1]} around here")
+        else:
+            player.inventory.append(item)
+    elif action[0] == "inventory" or action[0] == "inv":
+        print("# Inventory")
+        for item in player.inventory:
+            print(f"- {item.name}: {item.description}")
+        print()
     else:
         print(f"I don't know how to \"{action[0]}\"")
