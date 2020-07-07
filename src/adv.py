@@ -53,11 +53,51 @@ player = Player(room['outside'])
 #
 # If the user enters "q", quit the game.
 
-running = True
+def direction_name(direction):
+    if direction == 'n':
+        return "north"
+    elif direction == 'e':
+        return "east"
+    elif direction == 's':
+        return "south"
+    elif direction == 'w':
+        return "west"
 
-while running:
-    action = input("> ").split(" ")
-    if action[0] == "quit":
-        running = False
+def move_to_room(player, direction):
+    next_room = None
+    if direction == 'n':
+        next_room = player.current_room.n_to
+    elif direction == 'e':
+        next_room = player.current_room.e_to
+    elif direction == 's':
+        next_room = player.current_room.s_to
+    elif direction == 'w':
+        next_room = player.current_room.w_to
+
+    if next_room == None:
+        print(f"There is no way to go {direction_name(direction)}")
+    else:
+        player.current_room = next_room
+
+while True:
+    print(f"\n# {player.current_room.name}\n")
+    print(f"{player.current_room.description}\n")
+
+    action = None
+    try:
+        action = input("> ").split(" ")
+    except EOFError:
+        break
+
+    if action[0] == "quit" or action[0] == "q":
+        break
+    elif action[0] == "north" or action[0] == "n":
+        move_to_room(player, "n")
+    elif action[0] == "east" or action[0] == "e":
+        move_to_room(player, "e")
+    elif action[0] == "south" or action[0] == "s":
+        move_to_room(player, "s")
+    elif action[0] == "west" or action[0] == "w":
+        move_to_room(player, "w")
     else:
         print(f"I don't know how to \"{action[0]}\"")
