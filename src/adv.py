@@ -1,4 +1,6 @@
 from room import Room
+from player import Player
+from item import Item, LightSource
 
 # Declare all the rooms
 
@@ -14,11 +16,11 @@ into the darkness. Ahead to the north, a light flickers in
 the distance, but there is no way across the chasm."""),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
+to north. The smell of gold permeates the air.""", [Item("gold", "a nugget of gold")], lit=False),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
 chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
+earlier adventurers. The only exit is to the south.""", items=[LightSource("lamp", "a plain lamp, that is somehow still lit")], lit=False),
 }
 
 
@@ -38,14 +40,99 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+#
+# The player is named Steve because the specification says they need a name
+player = Player(room['outside'], name="Steve")
 
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
+def direction_name(direction):
+    if direction == 'n':
+        return "north"
+    elif direction == 'e':
+        return "east"
+    elif direction == 's':
+        return "south"
+    elif direction == 'w':
+        return "west"
+
+def move_to_room(player, direction):
+    next_room = None
+    if direction == 'n':
+        next_room = player.current_room.n_to
+    elif direction == 'e':
+        next_room = player.current_room.e_to
+    elif direction == 's':
+        next_room = player.current_room.s_to
+    elif direction == 'w':
+        next_room = player.current_room.w_to
+
+    if next_room == None:
+        print(f"There is no way to go {direction_name(direction)}")
+    else:
+        player.current_room = next_room
+
+while True:
+    can_see = player.can_see()
+
+    if can_see:
+        print(f"\n# {player.current_room.name}\n")
+        print(f"{player.current_room.description}\n")
+
+        if (len(player.current_room.items) > 0):
+            print(f"\n## Items")
+        for item in player.current_room.items:
+            print(f"- {item.name}: {item.description}")
+        if (len(player.current_room.items) > 0):
+            print()
+    else:
+        print("The room is dark; you can't see a thing")
+
+    action = None
+    try:
+        action = input("> ").split(" ")
+    except EOFError:
+        break
+
+    if action[0] == "quit" or action[0] == "q":
+        break
+    elif action[0] == "north" or action[0] == "n":
+        move_to_room(player, "n")
+    elif action[0] == "east" or action[0] == "e":
+        move_to_room(player, "e")
+    elif action[0] == "south" or action[0] == "s":
+        move_to_room(player, "s")
+    elif action[0] == "west" or action[0] == "w":
+        move_to_room(player, "w")
+    elif action[0] == "get" or action[0] == "take":
+        if len(action) != 2:
+            print("Invalid usage of `get`")
+            print("Usage:")
+            print(f"  {action[0]} <item>")
+            continue
+        if not can_see:
+            print("Good luck finding anything in the dark!")
+            continue
+        item = player.current_room.take(action[1])
+        item.on_take()
+        if item == None:
+            print(f"I don't see a {action[1]} around here")
+        else:
+            player.inventory.append(item)
+    elif action[0] == "inventory" or action[0] == "inv" or action[0] == "i":
+        print("# Inventory")
+        for item in player.inventory:
+            print(f"- {item.name}: {item.description}")
+        print()
+    elif action[0] == "drop" or action[0] == "d":
+        if len(action) != 2:
+            print("Invalid usage of `drop`")
+            print("Usage:")
+            print(f"  {action[0]} <item>")
+            continue
+        item = player.take(action[1])
+        item.on_drop()
+        if item == None:
+            print(f"I don't have a {action[1]}")
+        else:
+            player.current_room.add_item(item)
+    else:
+        print(f"I don't know how to \"{action[0]}\"")
